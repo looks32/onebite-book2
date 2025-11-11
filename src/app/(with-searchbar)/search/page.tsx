@@ -1,9 +1,18 @@
-export default async function Page({
+import books from "@/mock/books.json";
+import BookItem from "@/components/book-item";
+
+export default function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ q: string }>;
+  searchParams: {
+    q?: string;
+  };
 }) {
-  // 쿼리 받아와서 사용하기
-  const { q } = await searchParams;
-  return <div>search {q}</div>;
+  return (
+    <div>
+      {books.map((book) => (
+        <BookItem key={book.id} {...book} />
+      ))}
+    </div>
+  );
 }
