@@ -5,7 +5,11 @@ import { BookData } from '@/types';
 
 async function Footer() {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book`,
+
+    // 한번 받은 캐시를 유지함으로써
+    // 다른 페이지들이 다이나믹 페이지가 되는 것을 방지함
+    { cache: 'force-cache' }
   );
   if (!response.ok) {
     return <footer>제작 @winterlood</footer>;
