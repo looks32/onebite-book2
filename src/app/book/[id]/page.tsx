@@ -2,28 +2,13 @@ import { BookData } from '@/types';
 import style from './page.module.css';
 import { notFound } from 'next/navigation';
 
-// 아래 만들어진 1,2,3 이외에는 모두
-// 404 페이지로 보낸다.
-// export const dynamicParams = false;
-
-// id 1,2,3 만 정적페이지로 생성
-// 1,2,3 이외의 페이지를 통해서 들어와도
-// 처음엔 로드하는 시간이 걸리지만
-// 정적인 페이지(html)가 만들어져서
-// 추후에 들어올때는 페이지가 빠르게 로드 된다.
 export function generateStaticParams() {
   return [{ id: '1' }, { id: '2' }, { id: '3' }];
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-
+async function BookDetail({ bookId }: { bookId: string }) {
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${id}`
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/${bookId}`
   );
 
   if (!response.ok) {
@@ -40,7 +25,7 @@ export default async function Page({
     books;
 
   return (
-    <div className={style.container}>
+    <section>
       <div
         className={style.cover_img_container}
         style={{ backgroundImage: `url('${coverImgUrl}')` }}
@@ -53,6 +38,36 @@ export default async function Page({
         {author} | {publisher}
       </div>
       <div className={style.description}>{description}</div>
+    </section>
+  );
+}
+
+function ReviewEditor() {
+  async function createReviewAction(formData: FormData) {
+    'use server';
+
+    const content = formData.get('content')?.toString();
+    const author = formData.get('author')?.toString();
+
+    console.log(content, author);
+  }
+
+  return (
+    <section>
+      <form action={createReviewAction}>
+        <input name="content" placeholder="리뷰 내용" type="text" />
+        <input name="author" placeholder="작성자" type="text" />
+        <button type="submit">작성하기</button>
+      </form>
+    </section>
+  );
+}
+
+export default function Page({ params }: { params: { id: string } }) {
+  return (
+    <div className={style.container}>
+      <BookDetail bookId={params.id} />
+      <ReviewEditor />
     </div>
   );
 }
