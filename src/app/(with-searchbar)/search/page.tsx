@@ -1,20 +1,13 @@
 import BookItem from '@/components/book-item';
 import { BookData } from '@/types';
+import { Suspense } from 'react';
 
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>;
-}) {
-  const { q = '' } = await searchParams;
-
+async function SearchResult({ q }: { q: string }) {
+  // 강제 로딩
+  await new Promise((resolve) => setTimeout(resolve, 1000));
   const response = await fetch(
-    `${
-      process.env.NEXT_PUBLIC_API_SERVER_URL
-    }/book/search?q=${encodeURIComponent(q)}`,
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/search?q=${q}`,
 
-    // searchParams 를 사용하기 때문에 스테틱 페이지로 만들 수 없지만
-    // 캐시를 저장시킴으로서 페칭을 조금 더 빠르게 로드 가능
     { cache: 'force-cache' }
   );
 
@@ -30,5 +23,18 @@ export default async function Page({
         <BookItem key={book.id} {...book} />
       ))}
     </div>
+  );
+}
+
+export default function Page({
+  searchParams,
+}: {
+  searchParams: { q?: string };
+}) {
+  return (
+    // key 값이 바뀔때 마다 로딩보이게
+    <Suspense key={searchParams.q || ''} fallback={<div>loading...</div>}>
+      <SearchResult q={searchParams.q || ''} />
+    </Suspense>
   );
 }
