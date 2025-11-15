@@ -1,4 +1,5 @@
 import BookItem from '@/components/book-item';
+import BookListSkeleton from '@/components/skeleton/book-list-skeleton';
 import { BookData } from '@/types';
 import { Suspense } from 'react';
 
@@ -33,7 +34,10 @@ export default function Page({
 }) {
   return (
     // key 값이 바뀔때 마다 로딩보이게
-    <Suspense key={searchParams.q || ''} fallback={<div>loading...</div>}>
+    <Suspense
+      key={searchParams.q || ''}
+      fallback={<BookListSkeleton count={3} />}
+    >
       <SearchResult q={searchParams.q || ''} />
     </Suspense>
   );
