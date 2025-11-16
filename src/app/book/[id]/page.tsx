@@ -1,6 +1,7 @@
 import { BookData } from '@/types';
 import style from './page.module.css';
 import { notFound } from 'next/navigation';
+import { createReviewAction } from '@/actions/create-review.action';
 
 export function generateStaticParams() {
   return [{ id: '1' }, { id: '2' }, { id: '3' }];
@@ -42,21 +43,14 @@ async function BookDetail({ bookId }: { bookId: string }) {
   );
 }
 
-function ReviewEditor() {
-  async function createReviewAction(formData: FormData) {
-    'use server';
-
-    const content = formData.get('content')?.toString();
-    const author = formData.get('author')?.toString();
-
-    console.log(content, author);
-  }
-
+function ReviewEditor({ bookId }: { bookId: string }) {
   return (
     <section>
       <form action={createReviewAction}>
-        <input name="content" placeholder="리뷰 내용" type="text" />
-        <input name="author" placeholder="작성자" type="text" />
+        {/* 안보이는 input bookId / readOnly를 안넣으면 최신버전에서 에러 발생 */}
+        <input name="bookId" value={bookId} hidden readOnly />
+        <input required name="content" placeholder="리뷰 내용" type="text" />
+        <input required name="author" placeholder="작성자" type="text" />
         <button type="submit">작성하기</button>
       </form>
     </section>
@@ -67,7 +61,7 @@ export default function Page({ params }: { params: { id: string } }) {
   return (
     <div className={style.container}>
       <BookDetail bookId={params.id} />
-      <ReviewEditor />
+      <ReviewEditor bookId={params.id} />
     </div>
   );
 }
