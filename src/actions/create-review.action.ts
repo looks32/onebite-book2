@@ -23,6 +23,11 @@ export async function createReviewAction(_: any, formData: FormData) {
         body: JSON.stringify({ bookId, content, author }),
       }
     );
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
     // res 상태 표시
     // console.log(response.status);
 
@@ -40,10 +45,6 @@ export async function createReviewAction(_: any, formData: FormData) {
       status: true,
       error: '',
     };
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
   } catch (err) {
     // console.log(err);
     return { status: false, error: `리뷰 저장에 실패했습니다. : ${err}` };
