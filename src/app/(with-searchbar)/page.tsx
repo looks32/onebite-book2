@@ -3,6 +3,7 @@ import style from './page.module.css';
 import { BookData } from '@/types';
 import { Suspense } from 'react';
 import BookListSkeleton from '@/components/skeleton/book-list-skeleton';
+import { Metadata } from 'next';
 
 async function AllBooks() {
   // 강제 로딩
@@ -48,6 +49,16 @@ async function RecoBooks() {
 
 // suspense 를 테스트해보기 위해 강제로 다이나믹 페이지로 전환
 export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: '한입 북스',
+  description: '한입 북스에 등록된 도서를 만나보세요.',
+  openGraph: {
+    title: '한입 북스',
+    description: '한입 북스에 등록된 도서를 만나보세요.',
+    images: ['/thumbnail.png'],
+  }
+}
 
 export default function Home() {
   return (
